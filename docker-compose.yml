@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Servicio de la Base de Datos (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: db_webii_semana2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crud_db
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # Servicio de la Aplicación (PHP + Apache)
+  app:
+    build: .
+    container_name: app_webii_semana2
+    restart: always
+    ports:
+      - "8080:80" # Acceso desde el navegador en http://localhost:8080
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+
+# Volúmenes para persistir los datos de MySQL
+volumes:
+  db_data:
